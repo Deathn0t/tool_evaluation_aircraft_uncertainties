@@ -1,0 +1,7 @@
+*.png
+*.o
+*.cmi
+*.cmx
+*.pyc
+data
+__pycache__

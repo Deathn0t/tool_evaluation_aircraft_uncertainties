@@ -1,0 +1,125 @@
+25c25
+< let conf_color = `Color "#358"          (* Highlighted conflicts color *)
+---
+> let conf_color = `Color "red"          (* Highlighted conflicts color *)
+27c27
+< let pln_color = `Color "#68a"          (* Route cmolor *)
+---
+> let pln_color = `Color "#68a"          (* Route color *)
+29,30c29,30
+< let traj_color = `Color "#579"       (* Convex trajectory color *)
+< let traj_conf_color = `Color "#358"  (* Convex conflicts color *)
+---
+> let traj_color = `Color "orange"       (* Convex trajectory color *)
+> let traj_conf_color = `Color "purple"  (* Convex conflicts color *)
+99d98
+<     scl : Widget.scale Widget.widget array;
+102c101
+<     mutable incert: float array;
+---
+>     mutable incert: int;
+155,158d153
+< 
+< let set_man state a =
+<   Acft.set_man_par a (Array.map (Scale.get) state.scl)
+< 
+161c156
+<   if state.cur <> -1 then set_man state state.acft.(state.cur)
+---
+>   if state.cur <> -1 then Acft.set_man state.incert state.acft.(state.cur)
+372,373d366
+<   let errs = Array.map (Scale.get) state.scl in
+< (*  Array.iteri (fun i x -> Printf.printf "err(%d)=%f\n" i x) errs; *)
+379c372
+<       Acft.set_traj_par ai errs;
+---
+>       Acft.set_traj ai state.incert;
+410c403
+< 	set_man state state.acft.(i);
+---
+> 	Acft.set_man state.incert state.acft.(i);
+437c430
+<   if cur <> -1 && state.cur <> cur then (
+---
+>   if state.cur <> cur then (
+439,441c432
+<     if state.cur <> -1 then (
+<       draw_pln state state.cur;
+<       draw_route state state.cur);
+---
+>     if state.cur <> -1 then (draw_pln state state.cur;draw_route state state.cur);
+475c466
+<       Acft.set_traj_par a (Array.map Scale.get state.scl);
+---
+>       Acft.set_traj a state.incert;
+497c488
+<   set_man state a;
+---
+>   Acft.set_man state.incert a;
+502,507d492
+< let update_traj state =
+<   if state.cur <> -1 then
+<     Acft.set_traj_par state.acft.(state.cur) (Array.map Scale.get state.scl);
+<   draw_traj state;
+<   draw_conf state
+< 
+561,563d545
+<   state.incert <- (Array.map (Scale.get) state.scl);
+<   Array.iter (fun x -> Printf.printf "%f " x) state.incert;
+<   flush stdout;
+628c610
+<     set_man state a;
+---
+>     Acft.set_man state.incert a;
+655d636
+<       (*
+675c656
+< *)
+---
+> 
+683,700d663
+<   let btn = Array.map (fun text -> Button.create ~text:text frame)
+<     [|"Mode: Dynamic";
+<       "Redo";
+<       "Solve";
+<       "Next";
+<       "Demo";
+<       "A*"|] in (*;
+<       "Incert : Medium"|] in *)
+<   let scale_frame = Frame.create top in
+<   let scl = Array.map (fun (label, minv, maxv, dv) ->
+<     let scl = Scale.create ~label:label	~min:minv ~max:maxv ~resolution:dv
+<       ~orient:`Horizontal scale_frame in
+<     Scale.set scl ((minv +. maxv) /. 2.);
+<     scl)
+<     [|("Speed", 0., 0.2, 0.01); 
+<       ("T0", 0., 60., 1.); 
+<       ("T1", 0., 60., 1.);
+<       ("Heading", 0., 10., 1.)|] in
+704,705c667,668
+<     btn = btn;
+<     scl = scl;
+---
+>     btn = Array.map (fun text -> Button.create ~text:text frame)
+>       [|"Mode: Dynamic"; "Redo"; "Solve"; "Next"; "Demo"; "A*";"Incert : Medium"|];
+708,709c671
+< (*    incert = [|1;2;3|].(incert); *)
+<     incert=[|0.1;30.;30.;5.|];
+---
+>     incert = [|1;2;3|].(incert);
+718d679
+< 
+721,722c682
+<   Tk.pack ~side:`Left ~ipadx:50 (Array.to_list state.scl);
+<   Tk.pack [frame; scale_frame];
+---
+>   Tk.pack [frame];
+734,738c694,695
+< (*  Button.configure ~command:(fun () -> change_incert state) state.btn.(6); *)
+<   (*  Button.configure ~command:(fun () -> change_incert2 state) state.btn.(7); *)
+<   Array.iter (fun scl -> 
+<     Scale.configure ~command:(fun _ -> update_traj state) scl) state.scl; 
+< 
+---
+>   Button.configure ~command:(fun () -> change_incert state) state.btn.(6);
+> (*  Button.configure ~command:(fun () -> change_incert2 state) state.btn.(7); *)
